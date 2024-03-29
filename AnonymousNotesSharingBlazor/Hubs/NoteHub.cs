@@ -7,7 +7,7 @@ namespace AnonymousNotesSharingBlazor.Hubs
     {
         public async Task StackChanged()
         {
-            await Clients.Others.SendAsync("ReceiveStackChanged");
+            await Clients.All.SendAsync("ReceiveStackChanged");
         }
     }
 }

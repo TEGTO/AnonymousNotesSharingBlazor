@@ -1,6 +1,8 @@
-﻿using AnonymousNotesSharingBlazor.Data;
+﻿using AnonymousNotesSharingBlazor.Components.Shared;
+using AnonymousNotesSharingBlazor.Data;
 using AnonymousNotesSharingBlazor.Models;
 using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AnonymousNotesSharingBlazor.Services
 {
@@ -12,11 +14,21 @@ namespace AnonymousNotesSharingBlazor.Services
         {
             this.dbContextFactory = contextFactory;
         }
-        public int GetTotalObjectCount()
+        public int GetTotalNotesCount()
         {
             using (var notesContext = dbContextFactory.CreateDbContext())
             {
                 return notesContext.Notes.Count();
+            }
+        }
+        public int GetTotalNotesCountWithText(string text)
+        {
+            using (var notesContext = dbContextFactory.CreateDbContext())
+            {
+                return notesContext.Notes
+                 .Where(note => (note.Title != null && note.Title.Contains(text))
+                 || (note.NoteMessage != null && note.NoteMessage.Contains(text)))
+                 .Count();
             }
         }
         public IEnumerable<NoteData> GetNotesOnPage(int page, int amountObjectsPerPage)
@@ -24,18 +36,35 @@ namespace AnonymousNotesSharingBlazor.Services
             using (var notesContext = dbContextFactory.CreateDbContext())
             {
                 IEnumerable<NoteData> notesOnPage = new List<NoteData>();
-                if (GetTotalObjectCount() > 0)
+                if (GetTotalNotesCount() > 0)
                 {
-                    int offset = (page - 1) * amountObjectsPerPage;
-                    var maxId = notesContext.Notes.Max(note => note.Id);
-                    var startId = maxId - offset;
                     notesOnPage = notesContext.Notes
-                    .Where(note => note.Id <= startId && note.Id > startId - page * amountObjectsPerPage)
                     .OrderByDescending(note => note.Id)
+                    .Skip((page - 1) * amountObjectsPerPage)
+                    .Take(amountObjectsPerPage)
                     .AsNoTracking()
                     .ToList();
                 }
                 return notesOnPage;
+            }
+        }
+        public IEnumerable<NoteData> GetNotesWithTextOnPage(string text, int page, int amountObjectsPerPage)
+        {
+            using (var notesContext = dbContextFactory.CreateDbContext())
+            {
+                IEnumerable<NoteData> notesThatContainText = new List<NoteData>();
+                if (GetTotalNotesCount() > 0)
+                {
+                    notesThatContainText = notesContext.Notes
+                       .Where(note => (note.Title != null && note.Title.Contains(text))
+                       || (note.NoteMessage != null && note.NoteMessage.Contains(text)))
+                       .OrderByDescending(note => note.Id)
+                       .Skip((page - 1) * amountObjectsPerPage)
+                       .Take(amountObjectsPerPage)
+                       .AsNoTracking()
+                       .ToList();
+                }
+                return notesThatContainText;
             }
         }
         public async void SetNote(NoteData note)

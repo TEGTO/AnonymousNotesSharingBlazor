@@ -1,0 +1,12 @@
+<RunSettings>
+  <Playwright>
+    <BrowserName>chromium</BrowserName>
+    <LaunchOptions>
+      <Headless>true</Headless>
+      <Channel>msedge</Channel>
+		</LaunchOptions>
+	</Playwright>
+	<TestRunParameters>
+		<Parameter name="testUrl" value="https://localhost:7224/" />
+	</TestRunParameters>
+</RunSettings>

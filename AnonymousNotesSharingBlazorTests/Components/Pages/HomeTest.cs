@@ -9,8 +9,7 @@ namespace AnonymousNotesSharingBlazorTests.Components.Pages
             public IEnumerable<NoteData> Notes { get => notes; }
             public string SearchTerm { get => searchTerm; set => searchTerm = value; }
 
-            public void GetDataFromServicePublic() => GetDataFromService();
-            public IEnumerable<NoteData> GetNotesThatContainTermPublic() => GetNotesThatContainTerm();
+            public void DefineNotesPublic() => DefineNotes();
         }
 
         [Test]
@@ -61,14 +60,15 @@ namespace AnonymousNotesSharingBlazorTests.Components.Pages
             var cut = RenderComponent<HomeHelper>();
             //Assert
             mockNoteService.Verify(x => x.GetNotesOnPage(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
-            mockNoteService.Verify(x => x.GetTotalObjectCount(), Times.Once);
+            mockNoteService.Verify(x => x.GetTotalNotesCount(), Times.Once);
             Assert.That(noteData1, Is.EqualTo(cut.Instance.Notes.First()));
             Assert.That(noteData2, Is.EqualTo(cut.Instance.Notes.Last()));
             //Act
-            cut.Instance.GetDataFromServicePublic();
+            cut.Instance.DefineNotesPublic();
             //Assert
             mockNoteService.Verify(x => x.GetNotesOnPage(It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(2));
-            mockNoteService.Verify(x => x.GetTotalObjectCount(), Times.Exactly(2));
+            mockNoteService.Verify(x => x.GetTotalNotesCount(), Times.Exactly(2));
+            Assert.That(cut.Instance.Notes.Count(), Is.EqualTo(2));
         }
         [Test]
         public void GetNotesThatContainTerm_ReturnsExpectedNotes()
@@ -79,16 +79,16 @@ namespace AnonymousNotesSharingBlazorTests.Components.Pages
             new NoteData { Title = "B", NoteMessage = "A" },
             new NoteData { Title = "C", NoteMessage = "C" }
             };
-            mockNoteService.Setup(s => s.GetNotesOnPage(It.IsAny<int>(), It.IsAny<int>())).Returns(testData);
-            mockNoteService.Setup(s => s.GetTotalObjectCount()).Returns(testData.Count);
+            mockNoteService.Setup(x => x.GetNotesWithTextOnPage("A", It.IsAny<int>(), It.IsAny<int>())).Returns(testData.Take(2));
+            mockNoteService.Setup(x => x.GetTotalNotesCountWithText("A")).Returns(2);
             var cut = RenderComponent<HomeHelper>();
             // Act
             cut.Instance.SearchTerm = "A";
-            var result = cut.Instance.GetNotesThatContainTermPublic();
-            // Assert
-            Assert.That(cut.Instance.Notes.Count(), Is.EqualTo(3));
-            Assert.That(result.Count(), Is.EqualTo(2));
-            Assert.IsTrue(result.Any(n => n.Title.Contains("A") || n.NoteMessage.Contains("A")));
+            cut.Instance.DefineNotesPublic();
+            mockNoteService.Verify(x => x.GetNotesWithTextOnPage(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+            mockNoteService.Verify(x => x.GetTotalNotesCountWithText(It.IsAny<string>()), Times.Once);
+            Assert.That(cut.Instance.Notes.Count(), Is.EqualTo(2));
+            Assert.IsTrue(cut.Instance.Notes.Any(n => n.Title.Contains("A") || n.NoteMessage.Contains("A")));
         }
     }
 }

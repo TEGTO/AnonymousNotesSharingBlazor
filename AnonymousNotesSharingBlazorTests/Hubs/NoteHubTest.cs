@@ -14,7 +14,7 @@ namespace AnonymousNotesSharingBlazorTests.Hubs
             base.SetUp();
             mockClients = new Mock<IHubCallerClients>();
             mockClientProxy = new Mock<IClientProxy>();
-            mockClients.Setup(clients => clients.Others).Returns(mockClientProxy.Object);
+            mockClients.Setup(clients => clients.All).Returns(mockClientProxy.Object);
         }
         [Test]
         public async Task HubSendStackChangedTest_SendsSuccessfully()
@@ -27,7 +27,7 @@ namespace AnonymousNotesSharingBlazorTests.Hubs
             //Act
             await simpleHub.StackChanged();
             //Assert
-            mockClients.Verify(clients => clients.Others, Times.Once);
+            mockClients.Verify(clients => clients.All, Times.Once);
             mockClientProxy.Verify(
                 clientProxy => clientProxy.SendCoreAsync(
                     "ReceiveStackChanged",
@@ -46,7 +46,7 @@ namespace AnonymousNotesSharingBlazorTests.Hubs
             //Act
             await simpleHub.StackChanged();
             //Assert
-            mockClients.Verify(clients => clients.Others, Times.Once);
+            mockClients.Verify(clients => clients.All, Times.Once);
             mockClientProxy.Verify(
                 clientProxy => clientProxy.SendCoreAsync(
                     "WrongMethodName",

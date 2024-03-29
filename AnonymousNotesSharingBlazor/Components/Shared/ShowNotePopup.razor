@@ -12,11 +12,16 @@
             param.Add("NoteData", noteData);
             param.Add("SubmitButtonText", submitButtonText);
             param.Add("Modal", Modal);
+            param.Add("UpdateParentPage", UpdateParentPage);
             await Modal.ShowAsync<NotePopup>(title: popupText, parameters: param);
         }
         catch (Exception ex)
         {
             Logger.Error(ex.Message);
         }
+    }
+    private async Task UpdateParentPage()
+    {
+        await InvokeAsync(StateHasChanged);
     }
 }

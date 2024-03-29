@@ -7,14 +7,14 @@
         {
             //Arrange
             string expectedHtml;
-            expectedHtml = "<form >\n";
+            expectedHtml = " <form >\n";
             expectedHtml += "  <div class=\"form-group\">\n";
             expectedHtml += "    <label for=\"noteTitle\" class=\"note-label\">Note Title</label>\n";
-            expectedHtml += "    <input type=\"text\" class=\"form-control\" id=\"noteTitle\" >\n";
+            expectedHtml += "    <input aria-label=\"noteTitle\" type=\"text\" class=\"form-control\" id=\"noteTitle\" value=\"\" >\n";
             expectedHtml += "  </div>\n";
             expectedHtml += "  <div class=\"form-group\">\n";
             expectedHtml += "    <label for=\"noteMessage\" class=\"note-label\">Note Message</label>\n";
-            expectedHtml += "    <input type=\"text\" class=\"form-control\" id=\"noteMessage\" >\n";
+            expectedHtml += "    <input aria-label=\"noteMessage\" type=\"text\" class=\"form-control\" id=\"noteMessage\" value=\"\" >\n";
             expectedHtml += "  </div>\n";
             expectedHtml += "  <button type=\"submit\" class=\"btn-secondary note-button\" style=\"margin-top:10px; min-width: 60px; align-content:center;\"></button>\n";
             expectedHtml += "</form>\n";
@@ -31,11 +31,11 @@
             expectedHtml = " <form >\n";
             expectedHtml += "  <div class=\"form-group\">\n";
             expectedHtml += "    <label for=\"noteTitle\" class=\"note-label\">Note Title</label>\n";
-            expectedHtml += "    <input type=\"text\" class=\"form-control\" id=\"noteTitle\" value=\"TestTitle\" >\n";
+            expectedHtml += "    <input aria-label=\"noteTitle\" type=\"text\" class=\"form-control\" id=\"noteTitle\" value=\"TestTitle\" >\n";
             expectedHtml += "  </div>\n";
             expectedHtml += "  <div class=\"form-group\">\n";
             expectedHtml += "    <label for=\"noteMessage\" class=\"note-label\">Note Message</label>\n";
-            expectedHtml += "    <input type=\"text\" class=\"form-control\" id=\"noteMessage\" value=\"TestMessage\" >\n";
+            expectedHtml += "    <input aria-label=\"noteMessage\" type=\"text\" class=\"form-control\" id=\"noteMessage\" value=\"TestMessage\" >\n";
             expectedHtml += "  </div>\n";
             expectedHtml += "  <button type=\"submit\" class=\"btn-secondary note-button\" style=\"margin-top:10px; min-width: 60px; align-content:center;\">Test</button>\n";
             expectedHtml += "</form>\n";

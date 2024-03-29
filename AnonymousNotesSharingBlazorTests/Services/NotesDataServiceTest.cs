@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AnonymousNotesSharingBlazorTests.Services
 {
-    public class NotesServiceTest : BunitTestContext
+    public class NotesDataServiceTest : BunitTestContext
     {
         private NotesDataService notesService;
         private Mock<NotesContext> mockDbContext;
@@ -18,13 +18,23 @@ namespace AnonymousNotesSharingBlazorTests.Services
             notesService = new NotesDataService(mockDbContextFactory.Object);
         }
         [Test]
-        public void GetTotalObjectCount_ReturnsCorrectCount()
+        public void GetTotalNotesCount_ReturnsCorrectCount()
         {
             // Act
-            var count = notesService.GetTotalObjectCount();
+            var count = notesService.GetTotalNotesCount();
             // Assert
             Assert.That(count, Is.EqualTo(GetTestNotes().Count));
             Assert.That(GetTestNotes().Count, Is.EqualTo(3));
+        }
+        [Test]
+        public void GetTotalNotesCountWithText_ReturnsCorrectCount()
+        {
+            // Act
+            var count1 = notesService.GetTotalNotesCountWithText("Test Note");
+            var count2 = notesService.GetTotalNotesCountWithText("Test Note 1");
+            // Assert
+            Assert.That(count1, Is.EqualTo(3));
+            Assert.That(count2, Is.EqualTo(1));
         }
         [Test]
         public void GetNotesOnPage_ReturnsCorrectNotes()
@@ -37,7 +47,19 @@ namespace AnonymousNotesSharingBlazorTests.Services
             // Assert
             Assert.That(notes.Count(), Is.EqualTo(2));
         }
-
+        [Test]
+        public void GetNotesOnPageWithText_ReturnsCorrectNotes()
+        {
+            // Arrange
+            int page = 1;
+            int amountObjectsPerPage = 2;
+            // Act
+            var notes1 = notesService.GetNotesWithTextOnPage("Test Note 1", page, amountObjectsPerPage);
+            var notes2 = notesService.GetNotesWithTextOnPage("Test Note", page, amountObjectsPerPage);
+            // Assert
+            Assert.That(notes1.Count(), Is.EqualTo(1));
+            Assert.That(notes2.Count(), Is.EqualTo(2));
+        }
         [Test]
         public void SetNote_AddsNewNote()
         {

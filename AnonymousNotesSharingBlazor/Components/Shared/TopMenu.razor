@@ -12,7 +12,7 @@
         </div>
     </div>
     <div aria-label="totalPages" class="note-label note-count">
-        Total Notes: @TotalPages
+        Total Notes: @TotalNotes
     </div>
 </div>
 
@@ -20,7 +20,7 @@
     [Parameter]
     public Action<string> OnSearch { get; set; } = default!;
     [Parameter]
-    public int TotalPages { get; set; }
+    public int TotalNotes { get; set; }
 
     protected string InputText { get; set; } = default!;
 
