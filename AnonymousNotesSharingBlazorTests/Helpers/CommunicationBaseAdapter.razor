@@ -1,0 +1,12 @@
+﻿@using static AnonymousNotesSharingBlazor.Components.Shared.CommunicationBase
+@inherits CommunicationBaseComponent
+
+@if (SendStackChangedNotify)
+{
+    SendStackChanged();
+}
+
+@code {
+    [Parameter]
+    public bool SendStackChangedNotify { get; set; }
+}

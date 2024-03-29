@@ -1,0 +1,22 @@
+﻿
+@code {
+    [Inject]
+    protected ILogger Logger { get; set; } = default!;
+    protected Modal Modal { get; set; } = default!;
+
+    protected async Task ShowPopup(NoteData noteData, string submitButtonText, string popupText)
+    {
+        try
+        {
+            var param = new Dictionary<string, object>();
+            param.Add("NoteData", noteData);
+            param.Add("SubmitButtonText", submitButtonText);
+            param.Add("Modal", Modal);
+            await Modal.ShowAsync<NotePopup>(title: popupText, parameters: param);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex.Message);
+        }
+    }
+}

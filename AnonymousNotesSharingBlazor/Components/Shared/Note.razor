@@ -1,0 +1,54 @@
+﻿@inherits ShowNotePopup
+
+<Modal @ref="Modal" />
+<div class="d-flex flex-column secondary-color note">
+    <div class="d-flex note-panel">
+        <div class="note-label note-title">
+            @if (NoteData.Title != null)
+            {
+                @NoteData.Title
+            }
+        </div>
+        <div class="note-label note-date">
+            Created @DaysSinceCreation days ago
+        </div>
+        <div class="d-flex note-buttons">
+            <div>
+                <button aria-label="toggleDescription" type="button" @onclick="ChangeDescriptionVisible" class="btn-secondary note-button">@ToggleButtonText</button>
+            </div>
+            <div>
+                <button aria-label="editNote" type="button" @onclick="ShowEditPopup" class="btn-secondary note-button">Edit note</button>
+            </div>
+        </div>
+    </div>
+    @if (descriptionVisible)
+    {
+        <div class="note-description">
+            <div class="main-color note-label text">
+                @if (NoteData.NoteMessage != null)
+                {
+                    @NoteData.NoteMessage
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public NoteData NoteData { get; set; } = new NoteData()!;
+
+    private bool descriptionVisible;
+    private void ChangeDescriptionVisible() => descriptionVisible = !descriptionVisible;
+    private async Task ShowEditPopup() => await ShowPopup(NoteData, "Edit", "Edit Note");
+
+    protected string ToggleButtonText { get => descriptionVisible ? "Hide note" : "View note"; }
+    protected int DaysSinceCreation
+    {
+        get
+        {
+            TimeSpan timeDifference = DateTime.UtcNow - NoteData.CreatedDate;
+            return (int)timeDifference.TotalDays;
+        }
+    }
+}

@@ -1,0 +1,93 @@
+﻿@page "/"
+@inject INoteDataService noteService;
+@inherits CommunicationBaseComponent
+@rendermode InteractiveServer
+
+<PageTitle>Notes</PageTitle>
+
+<div class="main-color side-row top-row">
+    <TopMenu OnSearch="OnSearch" TotalPages="totalPages" />
+</div>
+<div class="d-flex flex-column content main-layout">
+    <div class="d-flex flex-column p-3 notes-area">
+        @foreach (var note in displayNotes)
+        {
+            <Note NoteData="note" />
+        }
+    </div>
+    <PagePagination CurrentPageNumber="currentPageNumber" TotalPages="totalPages" OnChangePage="OnChangePage" />
+</div>
+
+@code {
+    protected int pageSize = 10;
+    protected int currentPageNumber = 1;
+    protected int totalPages;
+    protected string searchTerm = default!;
+    protected IEnumerable<NoteData> notes = default!;
+    protected IEnumerable<NoteData> displayNotes = new List<NoteData>();
+
+    protected event Action<string> OnSearch = default!;
+    protected event Action<int> OnChangePage = default!;
+
+    protected override void OnInitialized()
+    {
+        OnSearch += SearchTerm;
+        OnChangePage += ChangePage;
+        GetDataFromService();
+    }
+    protected override async void OnReceiveStackChanged()
+    {
+        if (CheckIfUpdateNotes())
+        {
+            GetDataFromService();
+            SetDisplayTermNotes();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+    private void ChangePage(int page)
+    {
+        currentPageNumber = page;
+        GetDataFromService();
+    }
+    protected void GetDataFromService()
+    {
+        try
+        {
+            totalPages = GetTotalPages();
+            notes = GetSortedNotes();
+            displayNotes = notes;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex.Message);
+        }
+    }
+    private async void SearchTerm(string term)
+    {
+        try
+        {
+            searchTerm = term;
+            displayNotes = notes;
+            SetDisplayTermNotes();
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex.Message);
+        }
+    }
+    private void SetDisplayTermNotes()
+    {
+        if (!string.IsNullOrEmpty(searchTerm))
+            displayNotes = GetNotesThatContainTerm();
+    }
+    protected IEnumerable<NoteData> GetNotesThatContainTerm() => notes.Where(
+        x => (!string.IsNullOrEmpty(x.Title) && x.Title.Contains(searchTerm))
+                || (!string.IsNullOrEmpty(x.NoteMessage) && x.NoteMessage.Contains(searchTerm)));
+
+    private IEnumerable<NoteData> GetSortedNotes() => noteService.GetNotesOnPage(currentPageNumber, pageSize)
+             .OrderByDescending(x => x.CreatedDate);
+
+    private int GetTotalPages() => (int)Math.Ceiling((double)noteService.GetTotalObjectCount() / pageSize);
+    private bool CheckIfUpdateNotes() => currentPageNumber == 1;
+}

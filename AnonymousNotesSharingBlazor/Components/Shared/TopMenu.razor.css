@@ -1,0 +1,17 @@
+﻿.top-menu {
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+    .top-menu .button-area {
+    }
+
+    .top-menu .search-note {
+        padding-top: 15px;
+        flex-grow: 0.7;
+    }
+
+    .top-menu .note-count {
+    }

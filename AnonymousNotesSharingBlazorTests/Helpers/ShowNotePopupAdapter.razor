@@ -1,0 +1,21 @@
+﻿@using AnonymousNotesSharingBlazor.Components.Shared
+@using BlazorBootstrap
+@inherits ShowNotePopup
+
+@if (RenderModal)
+{
+    <Modal @ref="Modal" />
+}
+@if (TriggerShowPopup)
+{
+    @ButtonShowPopup();
+}
+
+@code {
+    [Parameter]
+    public bool RenderModal { get; set; } = true;
+    [Parameter]
+    public bool TriggerShowPopup { get; set; }
+
+    private async Task ButtonShowPopup() => await ShowPopup(null, "Popup test button text", "Popup Test");
+}

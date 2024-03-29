@@ -1,0 +1,32 @@
+﻿@inherits ShowNotePopup
+@rendermode InteractiveServer
+
+<Modal @ref="Modal" />
+<div class="d-flex p-2 top-menu">
+    <div class="button-area">
+        <button type="button" @onclick="ShowCreatePopup" class="btn-secondary note-button">New note</button>
+    </div>
+    <div class="search-note">
+        <div class="input-group mb-3">
+            <input type="text" @oninput="InvokeOnInputChange" class="form-control" placeholder="Enter search term" aria-describedby="basic-addon2">
+        </div>
+    </div>
+    <div aria-label="totalPages" class="note-label note-count">
+        Total Notes: @TotalPages
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Action<string> OnSearch { get; set; } = default!;
+    [Parameter]
+    public int TotalPages { get; set; }
+
+    protected string InputText { get; set; } = default!;
+
+    private async Task ShowCreatePopup() => await ShowPopup(null, "Create", "Create Note");
+    private void InvokeOnInputChange(ChangeEventArgs e)
+    {
+        OnSearch?.Invoke(e.Value?.ToString() ?? string.Empty);
+    }
+}

@@ -1,0 +1,11 @@
+﻿global using AnonymousNotesSharingBlazor.Components.Shared;
+global using AnonymousNotesSharingBlazor.Models;
+global using AnonymousNotesSharingBlazor.Services;
+global using AnonymousNotesSharingBlazorTests.Components.Shared;
+global using AnonymousNotesSharingBlazorTests.Helpers;
+global using BlazorBootstrap;
+global using Bunit;
+global using Microsoft.Extensions.DependencyInjection;
+global using Moq;
+global using static AnonymousNotesSharingBlazor.Components.Shared.CommunicationBase;
+global using TopMenu = AnonymousNotesSharingBlazor.Components.Shared.TopMenu;

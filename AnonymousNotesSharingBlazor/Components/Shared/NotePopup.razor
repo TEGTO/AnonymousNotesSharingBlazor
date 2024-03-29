@@ -1,0 +1,63 @@
+﻿@using AnonymousNotesSharingBlazor.Services
+@using Microsoft.AspNetCore.SignalR.Client
+@inject INoteDataService noteService
+@inherits CommunicationBaseComponent
+
+<form @onsubmit="SubmitForm">
+    <div class="form-group">
+        <label for="noteTitle" class="note-label">Note Title</label>
+        <input type="text" class="form-control" id="noteTitle" @bind="noteTitle">
+    </div>
+    <div class="form-group">
+        <label for="noteMessage" class="note-label">Note Message</label>
+        <input type="text" class="form-control" id="noteMessage" @bind="noteMessage">
+    </div>
+    <button type="submit" class="btn-secondary note-button" style="margin-top:10px; min-width: 60px; align-content:center;">@SubmitButtonText</button>
+</form>
+
+@code {
+    [Parameter]
+    public NoteData NoteData { get; set; } = default!;
+    [Parameter]
+    public string SubmitButtonText { get; set; } = default!;
+    [Parameter]
+    public Modal Modal { get; set; } = default!;
+
+    private string noteTitle = default!;
+    private string noteMessage = default!;
+
+    protected override void OnInitialized()
+    {
+        if (NoteData != null)
+        {
+            noteTitle = NoteData?.Title ?? string.Empty;
+            noteMessage = NoteData?.NoteMessage ?? string.Empty;
+        }
+    }
+    private async Task SubmitForm()
+    {
+        try
+        {
+            bool createdNewNote = NoteData == null;
+            SendNoteToService();
+            if (createdNewNote)
+                await SendStackChanged();
+            await Modal.HideAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex.Message);
+        }
+    }
+    private void SendNoteToService()
+    {
+        if (NoteData == null)
+        {
+            NoteData = new NoteData();
+            NoteData.CreatedDate = DateTime.UtcNow;
+        }
+        NoteData.Title = noteTitle;
+        NoteData.NoteMessage = noteMessage;
+        noteService.SetNote(NoteData);
+    }
+}

@@ -1,0 +1,35 @@
+﻿@code {
+    public abstract class CommunicationBaseComponent : ComponentBase
+    {
+        [Inject]
+        protected ILogger Logger { get; set; } = default!;
+        [Inject]
+        protected INoteHubProxy NoteHubProxy { get; set; } = default!;
+        [Inject]
+        protected NavigationManager Navigation { get; set; } = default!;
+
+        protected override async Task OnInitializedAsync()
+        {
+            try
+            {
+                await NoteHubProxy.InitializeHubAsync(Navigation.ToAbsoluteUri("/noteshub"), OnReceiveStackChanged);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message);
+            }
+        }
+        protected async Task SendStackChanged()
+        {
+            try
+            {
+                await NoteHubProxy.SendStackChangedAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message);
+            }
+        }
+        protected virtual void OnReceiveStackChanged() { }
+    }
+}
